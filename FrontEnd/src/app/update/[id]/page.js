@@ -1,7 +1,7 @@
 "use client";
-import { update } from '@/app/Redux/userSlice';
+import { OneData, update } from '@/app/Redux/userSlice';
 import { useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function Page() {
@@ -21,7 +21,24 @@ export default function Page() {
     });
 
     const dispatch = useDispatch();
-    const{status}=useSelector(state=>state.Sli)
+    const { status, getOne } = useSelector(state => state.Sli);
+
+    useEffect(() => {
+        // Fetch user data when the component loads
+        dispatch(OneData(id));
+    }, [id, dispatch]);
+
+    useEffect(() => {
+        // Update form fields when the data is fetched
+        if (getOne) {
+            setData({
+                fname: getOne.fname || "",
+                lname: getOne.lname || "",
+                email: getOne.email || "",
+                password: getOne.password || "",
+            });
+        }
+    }, [getOne]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -172,7 +189,7 @@ export default function Page() {
                             className="w-full bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center focus:ring-blue-800 text-white"
                             type="submit"
                         >
-                          {status==="loading"?"Loading":"Update account"}
+                            {status === "loading" ? "Loading" : "Update account"}
                         </button>
                     </div>
                 </div>
